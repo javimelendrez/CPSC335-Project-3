@@ -1,0 +1,80 @@
+ <!doctype html>
+ <html>
+ <head>
+  <title> KNIGHT's FLOW </title>
+ </head> 
+
+
+ <style>
+
+#canvas{
+	border: 5px solid black;
+	background-size: 100%;
+}
+
+</style> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
+	</script> 
+ <script>
+ 	window.onload = function(){
+ 		var c = document.getElementById("canvas");
+ 		var ctx= c.getContext("2d");
+ 		ctx.strokeStyle = "black";
+ 		ctx.lineWidth = 4;
+
+
+ 		ctx.fillText("SOURCE",60, 50);
+ 		ctx.fillText("SINK", 360,470);
+
+
+ 		for(i = 0 ; i <= 600; i = i +60){
+ 			ctx.moveTo(i,0);
+ 			ctx.lineTo(i,600);
+
+ 			ctx.stroke();
+ 			 
+
+ 			for( j = 0; j <= 600 ; j = j + 60){
+ 				ctx.beginPath();
+ 				ctx.strokeStyle = "#FF0000";
+ 				ctx.arc(i,j, 2, 0, 1.5 * Math.PI);
+ 				ctx.stroke();
+ 				ctx.strokeStyle = "black";
+ 				var randomNumber = Math.floor(Math.random() * 30); 
+ 				ctx.fillText( "(" + 0 + "," + randomNumber + ")",i,j)
+
+ 			ctx.moveTo(0,j);
+ 			ctx.lineTo(600,j);
+ 			ctx.stroke();
+ 		}
+ 			 
+ 			 
+
+ 		}
+
+
+ 		 
+
+
+ 		 
+ 	}
+
+
+ </script> 
+
+ <body bgcolor="lightblue"  >
+ 	<center>
+ 		<H1>KNIGHT's FLOW </H1>
+ 	</center>
+ 	<center>
+<canvas id = "canvas" width="600" height="600">
+	Canvas not supported.
+</canvas> 
+ 	</center>
+
+ </body>
+
+ 
+
+ </html>

@@ -22,7 +22,7 @@
  		var ctx= c.getContext("2d");
  		ctx.strokeStyle = "black";
  		ctx.lineWidth = 4;
- 		//drawEdge(ctx, sourceX, sourceY, sinkX, sinkY);
+ 		//drawEdge(ctx, sourceX, sourceY, sinkX, sinkY, SourceCapacity, SinkCapacity);
 
  		ctx.fillText("SOURCE",60, 50);
  		ctx.fillText("SINK", 360,470);
@@ -54,8 +54,14 @@
  		}
 
 
- 		 
-
+ 	//	 , SourceCapacity, SinkCapacity
+function drawEdge(ctx, sourceX, sourceY, sinkX, sinkY)
+{
+ctx.beginPath();
+ctx.moveTo(sourceX, sourceY);
+ctx.lineTo(sinkX, sinkY);
+ctx.stroke();
+}
 
  		 
  	}

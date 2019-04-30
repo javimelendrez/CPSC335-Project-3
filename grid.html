@@ -17,15 +17,69 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
 	</script> 
  <script>
+	var Xcord; 
+	var YCord; 
+	var Xcord2; 
+	var YCord2;
+	var startingSource ; 
+	var SinkPoint; 
+	var sourceX1 = 0;
+	var sourceY1 = 0; 
+	var SinkX2 = 0; 
+	var SinkY2 = 0; 
+	var localSorouceCap = 0; 
+	var localSinkCap = 0 ; 
+	var length1 = 10; 
+	var width1 = 10;
+	var arry = [];
+	var arryV = []; // for keeping track of visted nodes 
+	var position = [];
+	var move = []; 
+	var path = 0; 
+function createArray()
+{
+
+for(var i = 0; i < length1; i++)
+{
+    arry[i] = [];
+    for(var j = 0; j < width1; j++)
+    {
+        arry[i][j] = 0;
+    }
+}
+}
+function creeatArray1()
+{
+
+for(var i = 0; i < length1; i++)
+{
+    arryV[i] = [];
+    for(var j = 0; j < width1; j++)
+    {
+        arryV[i][j] =  -1 ;
+    }
+}
+
+}
+	
  	window.onload = function(){
  		var c = document.getElementById("canvas");
  		var ctx= c.getContext("2d");
  		ctx.strokeStyle = "black";
  		ctx.lineWidth = 4;
-
-
- 		ctx.fillText("SOURCE",60, 50);
+		
+		createArray(); // broad array 
+		//creeatArray1(); // list 
+ 		//drawEdge(ctx, 60, 60, 180, 180,41,20);
+		//drawEdge(ctx, 60, 60, 180, 180,41,20);
+		ctx.fillText("TOP",0, 60);
+		ctx.fillText("ITERATE X",120, 50); // X ITERATES BY 60 
+		ctx.fillText("SOURCE",0, 60);
+ 		ctx.fillText("SOURCE",60, 60);
+		ctx.fillText("ITERATE Y ",60, 110); // Y ITERATE BY 60 
  		ctx.fillText("SINK", 360,470);
+		ctx.fillText("BOTTOM",0, 590);
+		ctx.fillText("test",0, 420);
 
 
  		for(i = 0 ; i <= 600; i = i +60){
@@ -43,25 +97,205 @@
  				ctx.strokeStyle = "black";
  				var randomNumber = Math.floor(Math.random() * 30); 
  				ctx.fillText( "(" + 0 + "," + randomNumber + ")",i,j)
+				var posI = i /60 ; 
+				var posj = j /60; 
+				
+				
+				if(posj < 10 && posI < 10) // for arry stuff 
+				{
+				 
+					arry[posI][posj] = randomNumber; 
+					
+				}
+				if( posI === 1 && posj  === 1 ) // startig point
+				{
+					sourceY1 = posI;
+					sourceX1 = posj;
+					startingSource = arry[posI][posj]; 
+					  
+				}
+					if( posI === 6 && posj  === 8 ) // sinking point 
+				{
+					SinkY2 = posI;
+					SinkX2 = posj; 
+					sinkPoint = arry[posI][posj]; 
+					
+				}
+				
 
  			ctx.moveTo(0,j);
  			ctx.lineTo(600,j);
  			ctx.stroke();
  		}
- 			 
+ 		 
  			 
 
  		}
+		KnightsTour(ctx); 
+	//	findPath(sourceY1,sourceX1, ctx);  // call path finder 
+		}
+function calcCords(y,x)
+{
 
+	Xcord = 60*x; 
+	YCord =  y*60; 
+}
+function calcCords2(y,x)
+{
+	
+	Xcord2 = 60*x; 
+	YCord2 =  y*60; 
+}
+function calcCap(SourceCapacity, SinkCapacity)
+{
+var capacity = (SourceCapacity+SinkCapacity)/2;
+return capacity;
+}
+//test code 
+
+function printSolution( arryV) 
+{ 
+    for (var x = 0; x <  10; x++) 
+    { 
+        for (var y = 0; y < 10; y++) 
+           console.log( arryV[x][y]); 
+        
+    } 
+} 
+function KnightsTour(ctx) /// driver function
+{
+	creeatArray1(); 
+	var xMove = [ 2, 1, -1, -2, -2, -1,  1,  2 ]; 
+	var yMove = [  1, 2,  2,  1, -1, -2, -2, -1 ]; 
+	
+	arryV[1][2] = 0 ; 
+	SloveKnightTour(1,2,1,arryV,xMove,yMove);
+		printSolution(arryV);
+		drawTheDots(ctx, arryV); 
+
+}
+function isSafe( x,  y, sol) 
+{ 
+    return ( x >= 0 && x < 10 && y >= 0 && 
+             y < 10 && sol[x][y] == -1); 
+} 
+
+function SloveKnightTour( x, y, movei, arryV, xMove, yMove)
+{
+	var k , nextX, nextY; 
+	
+	if(movei == 10  * 10 )
+	{
+		return true; 
+	}
+		
+	for(k = 0; k < 10; k++ )
+	{
+		nextX = x + xMove[k];
+		nextY = y + yMove[k]; 
+		if(isSafe(nextX, nextY, arryV))
+		{
+		
+			arryV[nextX][nextY] = movei; 
+				if(arryV[8][6] != -1)
+				{
+					return true; // stop at 6 8 
+				}
+			       if (SloveKnightTour(nextX, nextY, movei+1, arryV, 
+                         xMove, yMove) == true) 
+						 {
+							return true; 
+						 }
+						 
+			
+			else
+				arryV[nextX][nextY] = -1; 
+				
+			
+		}
+			
+	}
+	return false; 
+}
+
+function drawTheDots(ctx, arryV)
+{
+	
+	for(var i = 0; i < length1; i++)
+{
+   
+    for(var j = 0; j < width1; j++)
+    {
+	
+	
+       if( arryV[i][j] != -1) // skips if array equal to -1 
+	   {
+		var compare2 = arryV[i][j]
+		 for( var i2 = 0; i2 < length1; i2++) 
+		 
+		 {
+			for( var j2 = 0; j2< width1; j2++)
+			{
+			var compare1 = arryV[i2][j2];
+			if(compare1 != -1)
+			{
+				 
+				 
+				if(compare1 + 1  === compare2) // draws the line if finds the next index 
+				{
+					calcCords(j,i); 
+					calcCords2(j2,i2); 
+					drawEdge(ctx, Xcord, YCord,Xcord2,YCord2, arry[i][j], arry[i2][j2])
+				}
+			}
+			}
+		 }
+		
+	   }
+    }
+}
+} 
+ 
+
+
+
+  // test 
+function canMove( sY,  sX, MaxNumberOfMoves)
+{
+	if(sY >= 0 && sX >= 0 && sY < MaxNumberOfMoves && sX < MaxNumberOfMoves ) 
+		{
+			return true; 
+		}
+		return false; 
+}
+
+function NextKnightMove( sY,  sX,  sourceCap)
+{
+		if(sY > 0 && sY << 9 && sX > 0, sX < 10); 
+		{
+		
+		}
+} 
+
+ 	//	 , SourceCapacity, SinkCapacity
+function drawEdge(ctx, sourceX, sourceY, sinkX, sinkY, SourceCapacity, SinkCapacity)
+{
+var capacity = (SourceCapacity+SinkCapacity)/2;
+ctx.beginPath();
+ctx.moveTo(sourceY, sourceX);
+ctx.fillText( "(" + 0 + "," + capacity + ")",sourceX+30,sourceY-30);
+ctx.lineTo(sinkY, sinkX);
+
+
+ctx.stroke();
+
+
+}
 
  		 
+ 	
 
-
- 		 
- 	}
-
-
- </script> 
+</script> 
 
  <body bgcolor="lightblue"  >
  	<center>
@@ -71,6 +305,9 @@
 <canvas id = "canvas" width="600" height="600">
 	Canvas not supported.
 </canvas> 
+
+	  <title>Two Dimensional Arrays </title>
+	  <script type="text/javascript">
  	</center>
 
  </body>

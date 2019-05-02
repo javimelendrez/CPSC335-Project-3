@@ -1,0 +1,295 @@
+ <!doctype html>
+ <html>
+ <head>
+  <title> KNIGHT's FLOW </title>
+ </head> 
+
+
+ <style>
+
+#canvas{
+	border: 5px solid black;
+	background-size: 100%;
+}
+
+</style> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
+	</script> 
+ <script>
+	var Xcord; 
+	var YCord; 
+	var Xcord2; 
+	var YCord2;
+	var startingSource ; 
+	var SinkPoint; 
+	var sourceX1 = 0;
+	var sourceY1 = 0; 
+	var SinkX2 = 0; 
+	var SinkY2 = 0; 
+	var localSorouceCap = 0; 
+	var localSinkCap = 0 ; 
+	var length1 = 10; 
+	var width1 = 10;
+	var arry = [];
+	var arryV = []; // for keeping track of visted nodes 
+	var position = [];
+	var move = []; 
+	var path = 0; 
+function createArray()
+{
+
+for(var i = 0; i < length1; i++)
+{
+    arry[i] = [];
+    for(var j = 0; j < width1; j++)
+    {
+        arry[i][j] = 0;
+    }
+}
+}
+function creeatArray1()
+{
+
+for(var i = 0; i < length1; i++)
+{
+    arryV[i] = [];
+    for(var j = 0; j < width1; j++)
+    {
+        arryV[i][j] =  -1 ;
+    }
+}
+
+}
+	
+ 	window.onload = function(){
+ 		var c = document.getElementById("canvas");
+ 		var ctx= c.getContext("2d");
+ 		ctx.strokeStyle = "black";
+ 		ctx.lineWidth = 4;
+		
+		createArray(); // broad array 
+		//creeatArray1(); // list 
+ 		//drawEdge(ctx, 60, 60, 180, 180,41,20);
+
+		
+		
+ 		ctx.fillText("SOURCE",60, 60);
+		 // Y ITERATE BY 60 
+ 		ctx.fillText("SINK", 360,470);
+	
+		
+
+
+ 		for(i = 0 ; i <= 600; i = i +60){
+ 			ctx.moveTo(i,0);
+ 			ctx.lineTo(i,600);
+
+ 			ctx.stroke();
+ 			 
+
+ 			for( j = 0; j <= 600 ; j = j + 60){
+ 				ctx.beginPath();
+ 				ctx.strokeStyle = "#FF0000";
+ 				ctx.arc(i,j, 2, 0, 1.5 * Math.PI);
+ 				ctx.stroke();
+ 				ctx.strokeStyle = "black";
+ 				var randomNumber = Math.floor(Math.random() * 30); 
+ 				ctx.fillText( "(" + 0 + "," + randomNumber + ")",i,j)
+				var posI = i /60 ; 
+				var posj = j /60; 
+				
+				
+				if(posj < 10 && posI < 10) // for arry stuff 
+				{
+				 
+					arry[posI][posj] = randomNumber; 
+					
+				}
+				if( posI === 1 && posj  === 1 ) // startig point
+				{
+					sourceY1 = posI;
+					sourceX1 = posj;
+					startingSource = arry[posI][posj]; 
+					  
+				}
+					if( posI === 6 && posj  === 8 ) // sinking point 
+				{
+					SinkY2 = posI;
+					SinkX2 = posj; 
+					sinkPoint = arry[posI][posj]; 
+					
+				}
+				
+
+ 			ctx.moveTo(0,j);
+ 			ctx.lineTo(600,j);
+ 			ctx.stroke();
+ 		}
+ 		 
+ 			 
+
+ 		}
+		//KnightsTour(ctx); 
+		b = findMinOfSteps(0,0, 9,9);
+		drawThePath(1,1,b,ctx);
+	//	findPath(sourceY1,sourceX1, ctx);  // call path finder 
+		}
+function calcCords(y,x)
+{
+
+	Xcord = 60*x + 30; 
+	YCord =  y*60 + 30; 
+}
+function calcCords2(y,x)
+{
+	
+	Xcord2 = 60*x + 30; 
+	YCord2 =  y*60 + 30; 
+}
+function calcCap(SourceCapacity, SinkCapacity)
+{
+var capacity = (SourceCapacity+SinkCapacity)/2;
+return capacity;
+}
+//test code 
+
+function printSolution( arryV) 
+{ 
+    for (var x = 0; x <  10; x++) 
+    { 
+        for (var y = 0; y < 10; y++) 
+           console.log( arryV[x][y]); 
+        
+    } 
+} 
+
+
+//quees
+
+var cords = {X:0,Y:0};
+
+
+function isInside( x,  y,  N)  // cheecks withing boundries within a N*N broad
+{ 
+    if (x >= 1 && x <= N && y >= 1 && y <= N) 
+        return true; 
+    return false; 
+} 
+
+// finding by distance 
+function findMinOfSteps(x,y, x1,y2)
+{
+
+	var xMove = [ 2, 1, -1, -2, -2, -1,  1,  2 ];  // posible moves
+	var yMove = [  1, 2,  2,  1, -1, -2, -2, -1 ]; 
+	
+	creeatArray1();// resets the arryV  for marking visit or not 
+	
+	var a = []; // queeing 1st cors 
+	var cords = {X:x,Y:y,Cap:arry[x][y]}; // stores POS X POS Y and Capcity
+	var currx,curry; 
+	//q.add(x,y);
+	a.push(cords); 
+	arryV[x,y] = 1; // marking starting array = visted 
+	// arryV is used to keep traked of unvisted cordinates 
+	
+	while(a.length !== 0 )
+	{
+		var curr = a.pop();
+		//a.pop();
+		 
+        if (curr.X == x1 && curr.Y == y2) 
+            return a;
+			
+		for( var i =0; i < 8; i++)
+		{
+				currx = curr.X + xMove[i]; // loops through all the posible moves 
+				curry = curr.Y + yMove[i];
+				
+				if(isInside(currx,curry,9) && arryV[currx][curry] !=1)  // if its within boundries and is not marked visted 
+				{	arryV[currx][curry] = 1; 
+					var currentDist = cords.D + 1;  
+					cords = {X:currx,Y:curry,Cap:arry[currx][curry]};
+					a.push(cords);
+				}
+					
+		}
+		
+		
+	}
+	 
+	
+	
+}
+
+// function that draws the queue data structure
+function drawThePath(ix,iy, arry,ctx )
+{
+	var intiCords = arry.shift();
+	calcCords(ix,iy);
+	calcCords2(intiCords.X, intiCords.Y);
+	drawEdge(ctx,Xcord,YCord,Xcord2,YCord2,arry,ix,iy,intiCords.X,intiCords.Y);
+	
+	while (arry.length !== 0 )
+	{
+	
+		if(arry.length == 0)
+		{
+		 break;
+		}
+			
+			var intiCords = arry.shift();
+		calcCords(intiCords.X, intiCords.Y);
+		calcCords2(arry[0].X,arry[0].Y);
+		drawEdge(ctx,Xcord,YCord,Xcord2,YCord2,intiCords.X,intiCords.Y,arry[0].X,arry[0].Y);
+		
+	}
+		
+}
+
+  // test 
+
+
+ 	//	 , SourceCapacity, SinkCapacity
+function drawEdge(ctx, sourceX, sourceY, sinkX, sinkY, SourceCapacity, SinkCapacity)
+{
+var capacity = (SourceCapacity+SinkCapacity)/2;
+ctx.beginPath();
+ctx.moveTo(sourceY, sourceX);
+ ctx.fillStyle = "#ff00ff";
+ 	//ctx.rect(sourceX, sourceY + 30, 20, 5, 5);
+
+ctx.fillText( "(" + 10 + "," + capacity + ")",sourceX+ 40 ,sourceY + 30);
+ctx.strokeStyle = "#FF0000";
+ctx.lineTo(sinkY, sinkX);
+
+
+ctx.stroke();
+
+
+}
+
+ 		 
+ 	
+
+</script> 
+
+ <body bgcolor="lightblue"  >
+ 	<center>
+ 		<H1>KNIGHT's FLOW </H1>
+ 	</center>
+ 	<center>
+<canvas id = "canvas" width="600" height="600">
+	Canvas not supported.
+</canvas> 
+
+	  <title>Two Dimensional Arrays </title>
+	  <script type="text/javascript">
+ 	</center>
+
+ </body>
+
+ 
+
+ </html>

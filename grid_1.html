@@ -2,6 +2,7 @@
  <html>
  <head>
   <title> KNIGHT's FLOW </title>
+  
  </head> 
 
 
@@ -36,6 +37,7 @@
 	var position = [];
 	var move = []; 
 	var path = 0; 
+	var capOfAllPaths = [];
 function createArray()
 {
 
@@ -95,7 +97,7 @@ for(var i = 0; i < length1; i++)
  				ctx.stroke();
  				ctx.strokeStyle = "black";
  				var randomNumber = Math.floor(Math.random() * 30); 
- 				ctx.fillText( "(" + 0 + "," + randomNumber + ")",i,j)
+ 			//	ctx.fillText( "(" + 0 + "," + randomNumber + ")",i,j)
 				var posI = i /60 ; 
 				var posj = j /60; 
 				
@@ -131,10 +133,34 @@ for(var i = 0; i < length1; i++)
 
  		}
 		//KnightsTour(ctx); 
+		var maxFLow =0; 
 		b = findMinOfSteps(0,0, 9,9);
+		
+		
 		drawThePath(1,1,b,ctx);
+		PrintMaxFlow(ctx, MaxFlow(capOfAllPaths));
 	//	findPath(sourceY1,sourceX1, ctx);  // call path finder 
 		}
+		
+	function MaxFlow(capQue)
+	{
+		var flow = 0; 
+		var maxPush = capQue[1];
+		for(var i = 1; i< capQue.length; i++)
+		{
+			if( maxPush > capQue[i])
+			{
+				maxPush = capQue[i];
+			}
+			flow += maxPush;
+			
+		}
+		
+		return flow; 
+		
+	}
+		
+
 function calcCords(y,x)
 {
 
@@ -164,6 +190,12 @@ function printSolution( arryV)
     } 
 } 
 
+function PrintMaxFlow (ctx, maxFlow)
+{
+	ctx.font = "30px Arial";
+	ctx.fillText( "MAX FLOW:" + maxFlow ,350, 550);
+}
+
 
 //quees
 
@@ -187,7 +219,7 @@ function findMinOfSteps(x,y, x1,y2)
 	creeatArray1();// resets the arryV  for marking visit or not 
 	
 	var a = []; // queeing 1st cors 
-	var cords = {X:x,Y:y,Cap:arry[x][y]}; // stores POS X POS Y and Capcity
+	var cords = {X:x,Y:y,Cap:arry[x][y]}; // stores POS X POS Y and Capcity	2
 	var currx,curry; 
 	//q.add(x,y);
 	a.push(cords); 
@@ -239,10 +271,11 @@ function drawThePath(ix,iy, arry,ctx )
 		 break;
 		}
 			
-			var intiCords = arry.shift();
+		
 		calcCords(intiCords.X, intiCords.Y);
 		calcCords2(arry[0].X,arry[0].Y);
 		drawEdge(ctx,Xcord,YCord,Xcord2,YCord2,intiCords.X,intiCords.Y,arry[0].X,arry[0].Y);
+		var intiCords = arry.shift();
 		
 	}
 		
@@ -254,15 +287,20 @@ function drawThePath(ix,iy, arry,ctx )
  	//	 , SourceCapacity, SinkCapacity
 function drawEdge(ctx, sourceX, sourceY, sinkX, sinkY, SourceCapacity, SinkCapacity)
 {
+
 var capacity = (SourceCapacity+SinkCapacity)/2;
 ctx.beginPath();
 ctx.moveTo(sourceY, sourceX);
  ctx.fillStyle = "#ff00ff";
  	//ctx.rect(sourceX, sourceY + 30, 20, 5, 5);
 
-ctx.fillText( "(" + 10 + "," + capacity + ")",sourceX+ 40 ,sourceY + 30);
+ctx.fillText( capacity ,sourceY+ 20 ,sourceX + 10);
+ capOfAllPaths.push(capacity); 
+
 ctx.strokeStyle = "#FF0000";
 ctx.lineTo(sinkY, sinkX);
+ctx.rect(sinkY,sinkX , 5, 5);
+ctx.rect(sourceY, sourceX, 5, 5);
 
 
 ctx.stroke();
@@ -274,6 +312,10 @@ ctx.stroke();
  	
 
 </script> 
+
+
+
+
 
  <body bgcolor="lightblue"  >
  	<center>
